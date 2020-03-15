@@ -1,0 +1,15 @@
+var express = require('express');
+var cors = require('cors');
+
+var app = express();
+
+// your manifest must have appropriate CORS headers, you could also use '*'
+app.use(cors({ origin: '*' }));
+
+// http://expressjs.com/en/starter/static-files.html
+app.use(express.static('public'));
+
+// listen for requests :)
+var listener = app.listen(process.env.PORT, function () {
+  console.log('Your app is listening on port ' + listener.address().port);
+});

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
+</head>
+
+<body>
+    <div style="display: grid; grid-template-columns: auto auto;">
+        <div>
+            <label for="price">Price</label>
+            <input id="price" style="width: 90%;">
+        </div>
+        
+        <div>
+            <label for="web">Web</label>
+            <input id="web" style="width: 90%;">
+        </div>
+
+        <div style="grid-column-start: 1; grid-column-end: 3;">
+            <label for="note">Note</label>
+            <textarea id="note" style="width: 100%; height: 100px;"></textarea>
+        </div>
+    </div>
+
+    <div>
+        <button id="submit" type="submit" class="mod-primary">Save</button>
+    </div>
+
+    <script type="module">
+        let t = window.TrelloPowerUp.iframe();
+
+        const dateFormat = 'YYYY-MM-DD';
+        const timeFormat = 'HH:mm';
+        const dateTimeFormat = dateFormat + timeFormat;
+
+        // UI elements
+        let priceInput = document.getElementById('price'); 
+        let webInput = document.getElementById('web'); 
+        let noteInput = document.getElementById('note'); 
+        let submitBtn = document.getElementById('submit'); 
+
+        let validate = function() {
+            return null;
+        }
+
+        let submit = async function () {
+            // validate input
+            let errorMessage = validate();
+            if (errorMessage) {
+                await t.alert({
+                    message: errorMessage, 
+                    display: 'error',
+                });
+                return;
+            }
+
+            // save input
+            let info = {
+                price: priceInput.value,
+                web: webInput.value,
+                note: noteInput.value,
+            }
+            await t.set('card', 'shared', info);
+
+            await t.alert({
+                message: 'Saved',
+                display: 'success',
+            });
+        }
+
+        t.render(async function() {
+            // init
+            let info = await t.get('card', 'shared');
+            priceInput.value = info.price || "";
+            webInput.value = info.web || "";
+            noteInput.value = info.note || "";
+
+            submitBtn.addEventListener('click', submit);
+        });
+    </script>
+</body>
+
+</html>

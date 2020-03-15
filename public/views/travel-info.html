@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
+</head>
+
+<body>
+    <div style="display: grid; grid-template-columns: 33% 33% 33%;">
+        <div>
+            <label for="transport">Transport</label>
+            <input id="transport">
+        </div>
+
+        <div>
+            <label for="from">From</label>
+            <input id="from">
+        </div>
+    
+        <div>
+            <label for="to">To</label>
+            <input id="to">
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: auto auto;">
+        <div>
+            <label for="start-date">Start</label>
+            <div style="display: flex;">
+                <input id="start-date" type="date" style="width: 60%;">
+                <input id="start-time" style="width: 30%;">
+            </div>
+        </div>
+
+        <div>
+            <label for="stop-date">Stop</label>
+            <div style="display: flex;">
+                <input id="stop-date" type="date" style="width: 60%;">
+                <input id="stop-time" style="width: 30%;">
+            </div>
+        </div>
+
+        <div>
+            <label for="price">Price</label>
+            <input id="price">
+        </div>
+
+        <div>
+            <label for="web">Web</label>
+            <input id="web">
+        </div>
+
+        <div style="grid-column-start: 1; grid-column-end: 3;">
+            <label for="note">Note</label>
+            <textarea id="note" style="width: 100%; height: 100px;"></textarea>
+        </div>
+    </div>
+
+    <div>
+        <button id="submit" type="submit" class="mod-primary">Save</button>
+    </div>
+
+    <script type="module">
+        let t = window.TrelloPowerUp.iframe();
+
+        const dateFormat = 'YYYY-MM-DD';
+        const timeFormat = 'HH:mm';
+        const dateTimeFormat = dateFormat + timeFormat;
+
+        // UI elements
+        let transportInput = document.getElementById('transport'); 
+        let fromInput = document.getElementById('from'); 
+        let toInput = document.getElementById('to'); 
+        let startDateInput = document.getElementById('start-date'); 
+        let startTimeInput = document.getElementById('start-time'); 
+        let stopDateInput = document.getElementById('stop-date'); 
+        let stopTimeInput = document.getElementById('stop-time'); 
+        let priceInput = document.getElementById('price'); 
+        let webInput = document.getElementById('web'); 
+        let noteInput = document.getElementById('note'); 
+        let submitBtn = document.getElementById('submit'); 
+
+        let validate = function() {
+            let start = startDateInput.value + startTimeInput.value;
+            let startDate = moment(start, dateTimeFormat);
+            if (!startDate.isValid()) {
+                return 'Invalid date ' + start;
+            }
+
+            let stop = stopDateInput.value + stopTimeInput.value;
+            let stopDate = moment(stop, dateTimeFormat);
+            if (!stopDate.isValid()) {
+                return 'Invalid date ' + stop;
+            }
+
+            if (startDate > stopDate) {
+                return 'Stop date must be greated than start date';
+            }
+
+            return null;
+        }
+
+        let submit = async function () {
+            // validate input
+            let errorMessage = validate();
+            if (errorMessage) {
+                await t.alert({
+                    message: errorMessage, 
+                    display: 'error',
+                });
+                return;
+            }
+
+            // save input
+            let info = {
+                transport: transportInput.value,
+                from: fromInput.value,
+                to: toInput.value,
+                startDate: startDateInput.value,
+                startTime: startTimeInput.value,
+                stopDate: stopDateInput.value,
+                stopTime: stopTimeInput.value,
+                price: priceInput.value,
+                web: webInput.value,
+                note: noteInput.value,
+            }
+            await t.set('card', 'shared', info);
+
+            await t.alert({
+                message: 'Saved',
+                display: 'success',
+            });
+        }
+
+        t.render(async function() {
+            // init
+            let info = await t.get('card', 'shared');
+            transportInput.value = info.transport || "";
+            fromInput.value = info.from || "";
+            toInput.value = info.to || "";
+            startDateInput.value = info.startDate || "";
+            startTimeInput.value = info.startTime || timeFormat;
+            stopDateInput.value = info.stopDate || "";
+            stopTimeInput.value = info.stopTime || timeFormat;
+            priceInput.value = info.price || "";
+            webInput.value = info.web || "";
+            noteInput.value = info.note || "";
+
+            submitBtn.addEventListener('click', submit);
+        });
+    </script>
+</body>
+
+</html>

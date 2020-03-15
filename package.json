@@ -1,0 +1,22 @@
+{
+  "name": "trello-my-trip-planner",
+  "version": "0.0.1",
+  "description": "A Trello Power-Up tailored for my trip planning workflow",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.15.2",
+    "cors": "^2.8.3"
+  },
+  "engines": {
+    "node": "6.10.x"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}

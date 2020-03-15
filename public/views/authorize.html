@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+    <script src="https://p.trellocdn.com/power-up.min.js"></script>
+</head>
+
+<body>
+    <h1>
+        Authentication needed!
+    </h1>
+    <button id="auth-btn" type="submit" class="mod-primary">Authorize</button>
+
+    <script type="module">
+        import { Constants } from '../js/constants.js'
+
+        let t = TrelloPowerUp.iframe({
+            appKey: Constants.trelloApiKey,
+            appName: Constants.powerupName,
+        });
+
+        let authorize = async function () {
+            try {
+                await t.getRestApi().authorize({ scope: 'read,write' });
+                console.log('auth success'); 
+                await t.closeModal();
+            } catch (e) {
+                console.log('auth failed'); 
+                await t.alert({
+                    message: 'Authorization failed',
+                    display: 'error',
+                });
+            }
+        }
+
+        t.render(function() {
+            document.getElementById('auth-btn').addEventListener('click', authorize, false);
+        });
+    </script>
+</body>
+
+</html>
