@@ -6,7 +6,8 @@ let TripGenerator = async function (t) {
     let lists = await t.lists('all');
 
     let getCards = lstName => (lists.find(l => l.name == lstName) || {}).cards || [];
-    let toDictByUrl = cards => Object.fromEntries(cards.map(c => [c.url, c]));
+    let toShortLink = url => url.substr(0, url.lastIndexOf('/'));
+    let toDictByUrl = cards => Object.fromEntries(cards.map(c => [toShortLink(c.url), c]));
 
     let days = getCards("Days");
     let travelsByUrl = toDictByUrl(getCards("Travels"));
@@ -14,10 +15,14 @@ let TripGenerator = async function (t) {
     let activitiesByUrl = toDictByUrl(getCards("Activities"));
 
     let getHotelCard = function (dayCard) {
-        let urls = dayCard.attachments.map(card => card.url).filter(url => url in hotelsByUrl);
+        let urls = dayCard.attachments
+            .map(card => toShortLink(card.url))
+            .filter(url => url in hotelsByUrl);
+
         if (urls.length > 1) {
             throw `Day ${urls.name} has more than one hotel`;
         }
+
         return hotelsByUrl[urls[0]];
     }
     
@@ -47,7 +52,7 @@ let TripGenerator = async function (t) {
 
     let getTravelCards = function (dayCard) {
         return dayCard.attachments
-            .map(card => card.url)
+            .map(card => toShortLink(card.url))
             .filter(url => url in travelsByUrl)
             .map(url => travelsByUrl[url]);
     }
@@ -81,7 +86,7 @@ let TripGenerator = async function (t) {
 
     let getActivityCards = function (dayCard) {
         return dayCard.attachments
-            .map(card => card.url)
+            .map(card => toShortLink(card.url))
             .filter(url => url in activitiesByUrl)
             .map(url => activitiesByUrl[url]);
     }
