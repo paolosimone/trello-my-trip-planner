@@ -111,7 +111,7 @@ let TripGenerator = async function (t) {
             version: info.version || "",
             startDate: info.startDate || "",
             stopDate: info.stopDate || "",
-            map: info.map || "",
+            map: info.mapUrl || "",
             days: [],
         };
 
